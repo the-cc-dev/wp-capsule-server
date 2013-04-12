@@ -103,12 +103,6 @@ article {
 	.post-edit-link {
 		padding-left: 2px;
 	}
-/* 
-	.post-sticky-link,
-	.post-unsticky-link {
-		padding-left: 1px;
-	}
- */
 	.post-unsticky-link,
 	.post-sticky-loading-link {
 		display: none;
@@ -252,15 +246,13 @@ article.edit {
 		margin-right: 30px;
 		padding-left: 9px;
 	}
-}
-
-.edit {
-	.post-content {
-		background: #1a1a1a;
-		border: 1px solid #adadad;
-		min-height: 200px;
-		overflow: auto;
-		padding: 0;
+	a,
+	a:visited {
+		color: #666;
+	}
+	a:active,
+	a:hover {
+		color: #333;
 	}
 }
 
@@ -300,8 +292,9 @@ article.edit {
 		background: transparent;
 		border: none;
 		color: #666;
+		height: auto;
 		margin-top: 30px;
-		min-height: auto;
+		min-height: 0;
 		padding-bottom: 0;
 	}
 	.msg {
@@ -359,18 +352,9 @@ article.edit {
 	display: inline;
 }
 
-.close-content {
-	height: 20px;
-	border: 1px solid red;
-	position: absolute;
-	bottom: 0;
-	left: 0;
-	right: 0;
-}
-
 .edit .post-content {
 	background: $gray-light;
-	border: 1px solid #adadad;
+	border: 1px solid $gray;
 	min-height: 200px;
 	overflow: auto;
 	padding: 30px 0 0;
@@ -482,6 +466,17 @@ article.edit {
 .post-content .editor-padding {
 	background: #232323;
 	height: 3px;
+}
+
+.search-no-results-msg {
+	color: #999;
+	font-family: 'SourceSansProRegular';
+	font-size: 22px;
+	padding-top: 200px;
+	text-align: center;
+}
+.filters-on .search-no-results-msg {
+	padding-top: 75px;
 }
 
 /* Code */

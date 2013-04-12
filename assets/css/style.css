@@ -602,18 +602,20 @@ w
         min-width: 180px; }
       #header .filter .chzn-container .chzn-results .highlighted {
         background: #222222; }
-    #header .filter .chzn-container-multi .chzn-choices .search-choice {
-      -moz-border-radius: 0;
-      /* FF1+ */
-      -webkit-border-radius: 0;
-      /* Saf3+, Chrome */
-      border-radius: 0;
-      /* Standard. IE9+ */
-      /**
-       * @bugfix border-radius background bleed
-       * @see http://tumble.sneak.co.nz/post/928998513/fixing-the-background-bleed
-       */
-      -webkit-background-clip: padding-box; }
+    #header .filter .chzn-container-multi .chzn-choices {
+      background: #fff; }
+      #header .filter .chzn-container-multi .chzn-choices .search-choice {
+        -moz-border-radius: 0;
+        /* FF1+ */
+        -webkit-border-radius: 0;
+        /* Saf3+, Chrome */
+        border-radius: 0;
+        /* Standard. IE9+ */
+        /**
+         * @bugfix border-radius background bleed
+         * @see http://tumble.sneak.co.nz/post/928998513/fixing-the-background-bleed
+         */
+        -webkit-background-clip: padding-box; }
     #header .filter .chzn-container-active .chzn-single,
     #header .filter .chzn-container-active .chzn-choices {
       border-color: #aaa;
@@ -641,6 +643,8 @@ w
   color: #222222; }
 .filters-on #header .search input {
   opacity: 0.3; }
+.filters-on #header .filter {
+  display: block; }
 
 /* Typeahead search */
 .search_selected {
@@ -657,7 +661,8 @@ ul.search_results {
   margin: 0;
   padding: 0;
   position: absolute;
-  width: 288px; }
+  width: 288px;
+  z-index: 100; }
   ul.search_results li {
     padding: 10px; }
 
@@ -723,6 +728,7 @@ ul.search_results {
   -moz-box-shadow: inset -1px 0px 0px #000;
   -webkit-box-shadow: inset -1px 0px 0px #000;
   box-shadow: inset -1px 0px 0px #000;
+  overflow: hidden;
   padding-top: 30px;
   position: fixed;
   top: 0;
@@ -763,10 +769,27 @@ ul.search_results {
       font-family: "Fontello";
       font-size: 23px;
       -webkit-font-smoothing: subpixel-antialiased; }
-    .main-nav a.icon-projects {
+    .main-nav a.projects {
       font-family: "SourceSansProSemibold";
       font-size: 27px;
       -webkit-font-smoothing: subpixel-antialiased; }
+  .main-nav .spacer {
+    display: block;
+    height: 2000px;
+    width: 72px; }
+
+/* hack for webkit */
+.sidr-animating .main-nav {
+  height: 100%;
+  position: relative; }
+
+.sidr-open .main-nav {
+  left: 260px; }
+
+.sidr-projects-open .projects,
+.sidr-tags-open .tags {
+  background: #111111 url("../img/menu-sidr-open?ver=1.1") left center no-repeat;
+  background-size: 12px 75px; }
 
 /* 	Page Headers
 ------------------------------------------------------- */
@@ -782,6 +805,56 @@ ul.search_results {
     font-style: normal;
     font-weight: bold; }
 
+/*	Sidr Menu
+------------------------------------------------------- */
+.sidr {
+  /* Default Settings */
+  display: none;
+  position: absolute;
+  position: fixed;
+  top: 0;
+  height: 100%;
+  z-index: 999999;
+  width: 260px;
+  overflow-x: none;
+  overflow-y: auto;
+  /* Theme Settings */
+  background: #222222;
+  color: white;
+  font-family: 'SourceSansProRegular'; }
+  .sidr .sidr-inner {
+    padding: 15px 0; }
+  .sidr.right {
+    left: auto;
+    right: -260px; }
+  .sidr.left {
+    left: -260px;
+    right: auto; }
+  .sidr h2 {
+    padding-left: 15px; }
+  .sidr a,
+  .sidr a:visited {
+    color: white;
+    display: block;
+    padding: 7px 0 7px 15px;
+    text-decoration: none; }
+  .sidr a:active,
+  .sidr a:hover {
+    background: #111;
+    color: #f8f8f8; }
+  .sidr ul {
+    list-style: none;
+    margin: 0;
+    padding: 0; }
+  .sidr li {
+    font-size: 14px;
+    padding-right: 15px; }
+
+/*	Sidr Content
+------------------------------------------------------- */
+#projects, #tags {
+  display: none; }
+
 footer {
   background: none;
   clear: both;
@@ -790,6 +863,7 @@ footer {
   position: relative; }
   footer p {
     color: #999;
+    margin-left: 71px;
     text-align: center; }
     footer p a,
     footer p a:visited {
@@ -901,13 +975,7 @@ article {
   right: 0;
   top: 7px;
   width: 35px;
-  z-index: 100;
-  /* 
-  	.post-sticky-link,
-  	.post-unsticky-link {
-  		padding-left: 1px;
-  	}
-   */ }
+  z-index: 100; }
   .post-menu a,
   .post-menu span {
     display: none;
@@ -1061,13 +1129,12 @@ article.edit .post-close-link {
     margin-left: 24px;
     margin-right: 30px;
     padding-left: 9px; }
-
-.edit .post-content {
-  background: #1a1a1a;
-  border: 1px solid #adadad;
-  min-height: 200px;
-  overflow: auto;
-  padding: 0; }
+  .post-content a,
+  .post-content a:visited {
+    color: #666; }
+  .post-content a:active,
+  .post-content a:hover {
+    color: #333; }
 
 .content,
 .edit {
@@ -1102,8 +1169,9 @@ article.edit .post-close-link {
   background: transparent;
   border: none;
   color: #666;
+  height: auto;
   margin-top: 30px;
-  min-height: auto;
+  min-height: 0;
   padding-bottom: 0; }
 .deleted .msg {
   color: #222222;
@@ -1149,17 +1217,9 @@ article.edit .post-close-link {
 .saving .saving-indicator {
   display: inline; }
 
-.close-content {
-  height: 20px;
-  border: 1px solid red;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0; }
-
 .edit .post-content {
   background: #333333;
-  border: 1px solid #adadad;
+  border: 1px solid #222222;
   min-height: 200px;
   overflow: auto;
   padding: 30px 0 0; }
@@ -1247,6 +1307,16 @@ article.edit .post-close-link {
 .post-content .editor-padding {
   background: #232323;
   height: 3px; }
+
+.search-no-results-msg {
+  color: #999;
+  font-family: 'SourceSansProRegular';
+  font-size: 22px;
+  padding-top: 200px;
+  text-align: center; }
+
+.filters-on .search-no-results-msg {
+  padding-top: 75px; }
 
 /* Code */
 pre, code {

@@ -86,8 +86,12 @@
 				background: $gray;
 			}
 		}
-		.chzn-container-multi .chzn-choices .search-choice {
-			@include border-radius(0);
+		.chzn-container-multi .chzn-choices {
+			background: #fff;
+			
+			.search-choice {
+				@include border-radius(0);
+			}
 		}
 		.chzn-container-active .chzn-single,
 		.chzn-container-active .chzn-choices {
@@ -129,6 +133,9 @@
 	.search input {
 		opacity: 0.3;
 	}
+	.filter {
+		display: block;
+	}
 }
 
 /* Typeahead search */
@@ -149,6 +156,7 @@ ul.search_results {
 	padding: 0;
 	position: absolute;
 	width: 288px;
+	z-index: 100;
 
 	li {
 		padding: 10px;
@@ -220,13 +228,13 @@ ul.search_results {
 	-moz-box-shadow: inset -1px 0px 0px #000;
 	-webkit-box-shadow: inset -1px 0px 0px #000;
 	box-shadow: inset -1px 0px 0px #000;
+	overflow: hidden;
 	padding-top: 30px;
 	position: fixed;
 	top: 0;
 	width: 72px;
 	z-index: 100;
 	
-
 	ul {
 		position: relative;
 
@@ -264,13 +272,33 @@ ul.search_results {
 			font-size: 23px;
 			-webkit-font-smoothing: subpixel-antialiased; 
 		}
-		&.icon-projects {
+		&.projects {
 			font-family: $font-sans-semibold;
 			font-size: 27px;
 			-webkit-font-smoothing: subpixel-antialiased; 
 		}	
 	}
+	.spacer {
+		display: block;
+		height: 2000px;
+		width: 72px;
+	}
 }
+/* hack for webkit */
+.sidr-animating .main-nav {
+	height: 100%;
+	position: relative;
+}
+.sidr-open .main-nav {
+	left: 260px;
+}
+
+.sidr-projects-open .projects,
+.sidr-tags-open .tags {
+	background: #111 url_ver('../img/menu-sidr-open') left center no-repeat;
+	background-size: 12px 75px;
+}
+
 
 /* 	Page Headers
 ------------------------------------------------------- */
@@ -288,4 +316,67 @@ ul.search_results {
 		font-style: normal;
 		font-weight: bold;
 	}
+}
+
+/*	Sidr Menu
+------------------------------------------------------- */
+
+.sidr {
+	/* Default Settings */
+	display: none;
+	position: absolute;
+	position: fixed;
+	top: 0;
+	height: 100%;
+	z-index: 999999;
+	width: 260px;
+	overflow-x: none;
+	overflow-y: auto;
+	/* Theme Settings */
+	background: $gray;
+	color: $white;
+	font-family: 'SourceSansProRegular';
+	
+	.sidr-inner {
+		padding: 15px 0;
+	}
+	&.right {
+		left: auto;
+		right: -260px;
+	}
+	&.left {
+		left: -260px;
+		right: auto;
+	}
+	h2 {
+		padding-left: 15px;
+	}
+	a,
+	a:visited {
+		color: $white;
+		display: block;
+		padding: 7px 0 7px 15px;
+		text-decoration: none;
+	}
+	a:active,
+	a:hover {
+		background: #111;
+		color: #f8f8f8;
+	}
+	ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+	li {
+		font-size: 14px;
+		padding-right: 15px;
+	}
+}
+
+/*	Sidr Content
+------------------------------------------------------- */
+
+#projects, #tags {
+	display: none;
 }

@@ -128,6 +128,13 @@ function capsule_resources() {
 		CAPSULE_URL_VERSION,
 		true
 	);
+	wp_enqueue_script(
+		'sidr',
+		$template_url.'lib/sidr/dist/jquery.sidr.js',
+		array('jquery'),
+		CAPSULE_URL_VERSION,
+		true
+	);
 }
 add_action('wp_enqueue_scripts', 'capsule_resources');
 
@@ -317,7 +324,7 @@ function capsule_taxonomy_filter() {
 
 	CF_Taxonomy_Filter::start_form();
 
-	echo '<div class="cftf-options"><span class="label">'.__('Options', 'cftf').'</span>';
+	echo '<div class="cftf-options"><span class="label">'.__('Options', 'capsule').'</span>';
 
 	foreach ($args['taxonomies'] as $taxonomy => $tax_args) {
 		if (is_array($args)) {
@@ -332,7 +339,7 @@ function capsule_taxonomy_filter() {
 	CF_Taxonomy_Filter::author_select();
 
 	echo '</div>';
-	echo '<div class="cftf-dates"><span class="label">'.__('Date Range', 'cftf').'</span>';
+	echo '<div class="cftf-dates"><span class="label">'.__('Date Range', 'capsule').'</span>';
 
 	CF_Taxonomy_Filter::date_filter();
 
@@ -350,3 +357,21 @@ function capsule_tax_filter_url() {
 	return get_template_directory_uri().'/ui/lib/wp-taxonomy-filter/';
 }
 add_filter('cftf_url', 'capsule_tax_filter_url');
+
+function capsule_credits() {
+?>
+		<ul>
+			<li><a href="http://ajaxorg.github.io/ace/">Ace Code Editor</a> (<a href="https://github.com/ajaxorg/ace">GitHub</a>)</li>
+			<li><a href="http://harvesthq.github.io/chosen/">Chosen</a> (<a href="https://github.com/harvesthq/chosen">GitHub</a>)</li>
+			<li><a href="http://michelf.ca/projects/php-markdown/extra/">PHP Markdown Extra</a> (<a href="https://github.com/michelf/php-markdown">GitHub</a>)</li>
+			<li>Twitter Text JS (<a href="https://github.com/twitter/twitter-text-js">GitHub</a>)</li>
+			<li>jQuery .scrollintoview() (<a href="https://github.com/litera/jquery-scrollintoview">GitHub</a>)</li>
+			<li>JSON in JavaScript (<a href="https://github.com/douglascrockford/JSON-js">GitHub</a>)</li>
+			<li><a href="http://requirejs.org/">RequireJS</a> (<a href="https://github.com/jrburke/requirejs">GitHub</a>)</li>
+			<li><a href="http://www.berriart.com/sidr/">Sidr</a> (<a href="https://github.com/artberri/sidr">GitHub</a>)</li>
+			<li><a href="http://sass-lang.com/">Sass</a> (<a href="https://github.com/nex3/sass">GitHub</a>)</li>
+			<li><a href="http://www.google.com/fonts/specimen/Source+Sans+Pro">Source Sans Pro</a> &amp <a href="http://www.google.com/fonts/specimen/Source+Code+Pro">Source Code Pro</a></li>
+			<li>Icon fonts from Fontello (Andrew, please link as appropriate)
+		</ul>
+<?php
+}
