@@ -102,7 +102,7 @@ else if (is_tax('code')) {
 				<h1><?php echo $title; ?></h1>
 				<form class="search clearfix" action="<?php echo esc_url(home_url('/')); ?>" method="get" onsubmit="<?php echo $search_onsubmit; ?>">
 					<a href="#" class="filter-toggle"><?php _e('Filters', 'capsule'); ?></a>
-					<input type="text" class="js-search" name="s" value="" placeholder="<?php _e('Search @projects, #tags, `code, etc&hellip;', 'capsule'); ?>" />
+					<input type="text" class="js-search" name="s" value="<?php echo esc_attr(get_query_var('s')); ?>" placeholder="<?php _e('Search @projects, #tags, `code, etc&hellip;', 'capsule'); ?>" />
 					<input type="submit" value="<?php _e('Search', 'capsule'); ?>" />
 				</form>
 			</div>
@@ -154,7 +154,7 @@ else if (is_search()) {
 	<ul>
 <?php
 wp_list_categories(array(
-	'show_option_none' => __('(none)', 'capsule'),
+	'show_option_none' => '<span class="none">'.__('(none)', 'capsule').'</none>',
 	'taxonomy' => 'projects',
 	'title_li' => ''
 ));
@@ -166,7 +166,7 @@ wp_list_categories(array(
 	<ul>
 <?php
 wp_list_categories(array(
-	'show_option_none' => __('(none)', 'capsule'),
+	'show_option_none' => '<span class="none">'.__('(none)', 'capsule').'</none>',
 	'taxonomy' => 'post_tag',
 	'title_li' => ''
 ));
