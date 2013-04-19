@@ -192,7 +192,9 @@ article.edit header .post-close-link {
 }
 
 .spinner {
-	left: 0;
+	background: url_ver('../img/loading.gif') no-repeat center center;
+	background-size: 32px;
+	left: -52px;
 	position: absolute;
 	top: 0;
 
@@ -317,6 +319,10 @@ article.edit header .post-close-link {
 			margin-left: 12px;
 			padding: 7px 13px 5px;
 			text-decoration: none;
+		}
+		&:hover,
+		&:active {
+			color: #eee;
 		}
 	}
 }
