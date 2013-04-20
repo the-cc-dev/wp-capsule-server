@@ -493,8 +493,7 @@ function($) {
 				return false;
 			}
 			else {
-				$form.unbind('submit');
-				$form.submit();
+				$form.unbind('submit').submit();
 			}
 		});
 
@@ -510,10 +509,11 @@ function($) {
 				postId = $article.data('post-id');
 			Capsule.loadEditor($article, postId);
 			e.preventDefault();
-			// don't allow bubbling to load content
-			if ($article.hasClass('excerpt')) {
-				e.stopPropagation();
-			}
+		}).on('dblclick', 'body:not(.capsule-server) article:not(.edit) .post-content', function(e) {
+			// load editor
+			var $article = $(this).closest('article'),
+				postId = $article.data('post-id');
+			Capsule.loadEditor($article, postId);
 		}).on('click', 'article .post-close-link', function(e) {
 			e.preventDefault();
 			// save content and load excerpt
@@ -554,6 +554,15 @@ function($) {
 			e.preventDefault();
 		}).on('click', '.post-new-link', function(e) {
 			e.preventDefault();
+			if ($('#sidr-projects').is(':visible')) {
+				$.sidr('close', 'sidr-projects');
+			}
+			if ($('#sidr-tags').is(':visible')) {
+				$.sidr('close', 'sidr-tags');
+			}
+			if ($('#sidr-servers').is(':visible')) {
+				$.sidr('close', 'sidr-servers');
+			}
 			var $article = $('<article></article>').height('400px');
 			$('.body').prepend($article);
 			Capsule.createPost($article);
