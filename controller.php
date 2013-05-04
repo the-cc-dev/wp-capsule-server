@@ -56,7 +56,7 @@ function capsule_controller() {
 						setup_postdata($post);
 						$view = str_replace('post_', '', $_GET['capsule_action']);
 						ob_start();
-						include(STYLESHEETPATH.'/ui/views/'.$view.'.php');
+						include(get_template_directory().'/ui/views/'.$view.'.php');
 						$html = ob_get_clean();
 						$response = compact('html');
 						header('Content-type: application/json');
@@ -75,7 +75,7 @@ function capsule_controller() {
 						$post = get_post($post_id);
 						setup_postdata($post);
 						ob_start();
-						include(STYLESHEETPATH.'/ui/views/edit.php');
+						include(get_template_directory().'/ui/views/edit.php');
 						$html = ob_get_clean();
 						$response = array(
 							'html' => $html,
@@ -86,6 +86,9 @@ function capsule_controller() {
 					}
 					die();
 				}
+			break;
+			default:
+				do_action('capsule_controller_action_get', $_GET['capsule_action']);
 			break;
 		}
 	}
@@ -112,7 +115,7 @@ function capsule_controller() {
 					$post = get_post($post_id);
 					setup_postdata($post);
 					ob_start();
-					include(STYLESHEETPATH.'/ui/views/edit.php');
+					include(get_template_directory().'/ui/views/edit.php');
 					$html = ob_get_clean();
 					$ymd = get_the_time('Ymd', $post);
 					$response = array(
@@ -200,7 +203,7 @@ function capsule_controller() {
 					$result = 'success';
 					$msg = __('Post deleted', 'capsule');
 					ob_start();
-					include(STYLESHEETPATH.'/ui/views/deleted.php');
+					include(get_template_directory().'/ui/views/deleted.php');
 					$html = ob_get_clean();
 				}
 				else {
@@ -225,7 +228,7 @@ function capsule_controller() {
 					$result = 'success';
 					$msg = __('Post recovered from trash.', 'capsule');
 					ob_start();
-					include(STYLESHEETPATH.'/ui/views/excerpt.php');
+					include(get_template_directory().'/ui/views/excerpt.php');
 					$html = ob_get_clean();
 				}
 				else {
@@ -288,6 +291,9 @@ function capsule_controller() {
 
 // TODO
 
+			break;
+			default:
+				do_action('capsule_controller_action_post', $_POST['capsule_action']);
 			break;
 		}
 	}

@@ -6,6 +6,7 @@ define('CAPSULE_TAX_PREFIX_TAG', '#');
 define('CAPSULE_TAX_PREFIX_CODE', '`');
 
 show_admin_bar(false);
+remove_post_type_support('post', 'post-formats');
 
 function is_capsule_server() {
 	return (defined('CAPSULE_SERVER') && CAPSULE_SERVER);
@@ -24,7 +25,8 @@ if (!is_capsule_server()) {
 include_once('lib/wp-taxonomy-filter/taxonomy-filter.php');
 
 function capsule_gatekeeper() {
-	if (!current_user_can('read') && strpos(admin_url(), $_SERVER['REQUEST_URI']) !== false) {
+	$keep_out = apply_filters('capsule_gatekeeper_enabled', true);
+	if ($keep_out && !current_user_can('read')) {
 		$login_page = wp_login_url();
 		is_ssl() ? $proto = 'https://' : $proto = 'http://';
 		$requested = $proto.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
@@ -103,7 +105,7 @@ function capsule_resources_dev() {
 	wp_enqueue_script('jquery');
 	wp_enqueue_script('suggest');
 
-	// require.js enforces JS module dependencies, heavily used in 
+	// require.js enforces JS module dependencies, heavily used in
 	// loading Ace and related code
 	wp_enqueue_script(
 		'requirejslib',
@@ -127,7 +129,7 @@ function capsule_resources_dev() {
 	));
 	wp_enqueue_script(
 		'capsulebundle',
-		$assets_url.'out.js',
+		$assets_url.'js/capsule.js',
 		array('requirejs'),
 		CAPSULE_URL_VERSION,
 		true
@@ -289,6 +291,28 @@ function capsule_register_taxonomies() {
 }
 add_action('init', 'capsule_register_taxonomies');
 
+// check for taxonomy support in permalink patterns
+function capsule_permalink_check() {
+	$rewrite_rules = get_option('rewrite_rules');
+	if ($rewrite_rules == '') {
+		return;
+	}
+	global $wp_rewrite;
+	$pattern = 'projects/';
+	if (substr($pattern, 0, 1) == '/') {
+		$pattern = substr($pattern, 1);
+	}
+	// check for 'projects' in rewrite rules
+	foreach ($rewrite_rules as $rule => $params) {
+		if (substr($rule, 0, strlen($pattern)) == $pattern) {
+			return;
+		}
+	}
+	// flush rules if not found above
+	flush_rewrite_rules();
+}
+add_action('admin_init', 'capsule_permalink_check');
+
 function capsule_get_the_terms($terms, $id, $taxonomy) {
 	if (is_array($terms) && count($terms)) {
 		$prefix = null;
@@ -321,9 +345,9 @@ add_filter('get_the_terms', 'capsule_get_the_terms', 10, 3);
 function capsule_term_list($post_id, $taxonomy) {
 	if (($tax_terms = get_the_terms($post_id, $taxonomy)) != false) {
 		if ($taxonomy == 'post_tag') {
-			return get_the_term_list($post_id, $taxonomy, '<ul class="post-meta-tags"><li>', '</li><li>', '</li></ul>'); 
+			return get_the_term_list($post_id, $taxonomy, '<ul class="post-meta-tags"><li>', '</li><li>', '</li></ul>');
 		} else {
-			return get_the_term_list($post_id, $taxonomy, '<ul><li>', '</li><li>', '</li></ul>'); 
+			return get_the_term_list($post_id, $taxonomy, '<ul><li>', '</li><li>', '</li></ul>');
 		}
 	}
 	else {
@@ -332,10 +356,10 @@ function capsule_term_list($post_id, $taxonomy) {
 }
 
 function capsule_the_content_markdown($content) {
-	include_once(STYLESHEETPATH.'/ui/lib/php-markdown/markdown_extended.php');
+	include_once(get_template_directory().'/ui/lib/php-markdown/markdown_extended.php');
 	return MarkdownExtended($content);
 }
-add_filter('the_content', 'capsule_the_content_markdown');
+add_filter('the_content', 'capsule_the_content_markdown', 6);
 remove_filter('the_content', 'wpautop');
 remove_filter('the_content', 'wptexturize');
 
@@ -354,7 +378,7 @@ function capsule_header_js() {
 <script type="text/javascript">
 var capsuleSearchURL = '<?php echo home_url(); ?>';
 </script>
-<?php 
+<?php
 }
 if (!is_admin()) {
 	add_action('wp_head', 'capsule_header_js');

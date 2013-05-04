@@ -63,6 +63,7 @@ if (function_exists('cftf_is_filter') && cftf_is_filter()) {
 <div class="container">
 	<nav class="main-nav">
 		<ul>
+			<?php do_action('capsule_main_nav_before'); ?>
 			<li><a href="<?php echo esc_url(home_url('/')); ?>" class="icon">&#59392;</a></li>
 			<li><a href="<?php echo esc_url(admin_url('post-new.php')); ?>" class="post-new-link icon">&#59396;</a></li>
 			<li><a href="#projects" class="projects"><?php _e('@', 'capsule'); ?></a></li>
@@ -75,6 +76,7 @@ if (!empty($cap_servers)) {
 }
 ?>
 			<li><a href="<?php echo esc_url(admin_url('admin.php?page=capsule')); ?>" class="icon">&#59400;</a></li>
+			<?php do_action('capsule_main_nav_after'); ?>
 			<li><span class="spacer"></span></li>
 		</ul>
 	</nav>
@@ -115,6 +117,8 @@ else if (is_author()) {
 	$author = get_queried_object();
 	$title = sprintf(__('Author: %s', 'capsule'), esc_html($author->display_name));
 }
+$title = apply_filters('capsule_page_title', $title);
+
 ?>
 				<h1><?php echo $title; ?></h1>
 				<form class="search clearfix" action="<?php echo esc_url(home_url('/')); ?>" method="get" data-permastruct="<?php echo $search_permastruct; ?>">
