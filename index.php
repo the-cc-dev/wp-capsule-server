@@ -37,6 +37,8 @@ if (function_exists('cftf_is_filter') && cftf_is_filter()) {
 	$body_classes[] = 'filters-on';
 }
 
+$theme_url = trailingslashit(get_template_directory_uri());
+
 ?>
 <!DOCTYPE html>
 <!--[if IE 6]>
@@ -57,6 +59,11 @@ if (function_exists('cftf_is_filter') && cftf_is_filter()) {
 	
 	<title><?php wp_title( '|', true, 'right' ); echo esc_html( get_bloginfo('name'), 1 ).$title_description; ?></title>
 	
+	<link rel="icon" href="<?php echo $theme_url; ?>ui/assets/icon/capsule-16.png" sizes="16x16">
+	<link rel="icon" href="<?php echo $theme_url; ?>ui/assets/icon/capsule-32.png" sizes="32x32">
+	<link rel="icon" href="<?php echo $theme_url; ?>ui/assets/icon/capsule-48.png" sizes="48x48">
+	<link rel="icon" href="<?php echo $theme_url; ?>ui/assets/icon/capsule-128.png" sizes="128x128">
+	
 <?php wp_head(); ?>
 </head>
 <body <?php body_class(implode(' ', $body_classes)); ?>>
@@ -64,7 +71,7 @@ if (function_exists('cftf_is_filter') && cftf_is_filter()) {
 	<nav class="main-nav">
 		<ul>
 			<?php do_action('capsule_main_nav_before'); ?>
-			<li><a href="<?php echo esc_url(home_url('/')); ?>" class="icon">&#59392;</a></li>
+			<li><a href="<?php echo esc_url(home_url('/')); ?>" class="home icon">&#59392;</a></li>
 			<li><a href="<?php echo esc_url(admin_url('post-new.php')); ?>" class="post-new-link icon">&#59396;</a></li>
 			<li><a href="#projects" class="projects"><?php _e('@', 'capsule'); ?></a></li>
 			<li><a href="#tags" class="tags icon"><?php _e('#', 'capsule'); ?></a></li>

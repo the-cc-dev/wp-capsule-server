@@ -14,7 +14,7 @@ function is_capsule_server() {
 
 function capsule_mode() {
 	if (!defined('CAPSULE_MODE')) {
-		define('CAPSULE_MODE', 'prod');
+		define('CAPSULE_MODE', 'dev');
 	}
 	return CAPSULE_MODE;
 }
@@ -103,7 +103,17 @@ function capsule_resources_dev() {
 
 	// Scripts
 	wp_enqueue_script('jquery');
+	wp_enqueue_script(
+		'hotkeys',
+		$template_url.'lib/jquery.hotkeys/jquery.hotkeys.js',
+		array('jquery'),
+		CAPSULE_URL_VERSION,
+		true
+	);
 	wp_enqueue_script('suggest');
+	if (!is_capsule_server()) {
+		wp_enqueue_script('heartbeat');
+	}
 
 	// require.js enforces JS module dependencies, heavily used in
 	// loading Ace and related code
@@ -190,9 +200,6 @@ function capsule_resources_dev() {
 		CAPSULE_URL_VERSION,
 		true
 	);
-	if (!is_capsule_server()) {
-		wp_enqueue_script('heartbeat');
-	}
 	wp_enqueue_script(
 		'linkify',
 		$template_url.'lib/linkify/1.0/jquery.linkify-1.0-min.js',
@@ -451,6 +458,7 @@ function capsule_credits() {
 			<li><a href="http://www.berriart.com/sidr/">Sidr</a> (<a href="https://github.com/artberri/sidr">GitHub</a>)</li>
 			<li>Linkify (<a href="https://github.com/maranomynet/linkify">GitHub</a>)</li>
 			<li><a href="http://sass-lang.com/">Sass</a> (<a href="https://github.com/nex3/sass">GitHub</a>)</li>
+			<li>Capsule Icon by <a href="http://dribbble.com/matthewspiel">Matthew Spiel</a></li>
 			<li><a href="http://www.google.com/fonts/specimen/Source+Sans+Pro">Source Sans Pro</a> (<a href="https://github.com/adobe/source-sans-pro">GitHub</a>)</li>
 			<li><a href="http://www.google.com/fonts/specimen/Source+Code+Pro">Source Code Pro</a> (<a href="https://github.com/adobe/source-code-pro">GitHub</a>)</li>
 			<li><a href="http://fontello.com">Fontello</a> (<a href="https://github.com/fontello/fontello">GitHub</a>) &amp; Fontelico (<a href="https://github.com/fontello/fontelico.font">GitHub</a>)</li>
@@ -485,6 +493,127 @@ function capsule_login_redirect($redirect_to, $request_str) {
 	return $redirect_to;
 }
 add_action('login_redirect', 'capsule_login_redirect', 10, 2);
+
+function capsule_queue_api_key() {
+	return sha1('capsule_queue'.AUTH_KEY.AUTH_SALT);
+}
+
+function capsule_queue_add($post_id) {
+	$post_id = intval($post_id);
+	if (!$post_id) {
+		return;
+	}
+	$queue = get_option('capsule_queue');
+	if (!is_array($queue)) {
+		$queue = array();
+	}
+	$queue[] = $post_id;
+	$queue = array_unique($queue);
+	update_option('capsule_queue', $queue);
+}
+
+function capsule_queue_remove($post_id) {
+	$post_id = intval($post_id);
+	if (!$post_id) {
+		return;
+	}
+	$_queue = get_option('capsule_queue');
+	if (!is_array($_queue)) {
+		return;
+	}
+	$queue = array();
+	foreach ($_queue as $_post_id) {
+		if ($_post_id != $post_id) {
+			$queue[] = $_post_id;
+		}
+	}
+	$queue = array_unique($queue);
+	update_option('capsule_queue', $queue);
+}
+
+function capsule_queue_start() {
+	$url = add_query_arg(array(
+		'capsule_action' => 'queue_run',
+		'api_key' => capsule_queue_api_key()
+	), site_url('index.php'));
+	wp_remote_get(
+		$url,
+		array(
+			'blocking' => false,
+			'sslverify' => false,
+			'timeout' => 0.01,
+		)
+	);
+}
+
+function capsule_queue_run() {
+	set_time_limit(0);
+	// this is a very weak "lock" mechanism, but may be suitable for
+	// low request situations like Capsule
+	$lock = get_option('capsule_queue_lock');
+	if (!empty($lock) && $lock > strtotime('now')) {
+		return;
+	}
+	update_option('capsule_queue_lock', strtotime('+5 minutes'));
+	$queue = get_option('capsule_queue');
+	for ($i = 0; $i < count($queue) && $i < 10; $i++) {
+		$url = add_query_arg(array(
+			'capsule_action' => 'queue_post_to_server',
+			'post_id' => $queue[$i],
+			'api_key' => capsule_queue_api_key()
+		), site_url('index.php'));
+		wp_remote_get(
+			$url,
+			array(
+				'blocking' => false,
+				'sslverify' => false,
+				'timeout' => 0.01,
+			)
+		);
+	}
+	if (count(queue) > 10) {
+		capsule_queue_start();
+	}
+	update_option('capsule_queue_lock', '');
+}
+
+function capsule_queue_post_to_server($post_id) {
+	global $cap_client;
+
+	$post = get_post($post_id);
+
+	// Check if there are any posts in the post type
+	$taxonomies = get_object_taxonomies($post->post_type);
+	$servers = $cap_client->get_servers();
+	$postarr = (array) $post;
+
+	$errors = 0;
+	foreach ($servers as $server_post) {
+		// Only send post if theres a term thats been mapped
+		if ($cap_client->has_server_mapping($post, $server_post)) {
+			$tax_input = $cap_client->format_terms_to_send(
+				$post,
+				$taxonomies,
+				$cap_client->post_type_slug($server_post->post_name)
+			);
+			$mapped_taxonomies = $cap_client->taxonomies_to_map();
+
+			$tax = compact('taxonomies', 'tax_input', 'mapped_taxonomies');
+
+			$api_key = get_post_meta($server_post->ID, $cap_client->server_api_key, true);
+			$endpoint = get_post_meta($server_post->ID, $cap_client->server_url_key, true);
+
+			$response = $cap_client->send_post($postarr, $tax, $api_key, $endpoint);
+			if (!$response || !isset($response->result) || $response->result != 'success') {
+				$errors++;
+			}
+		}
+	}
+	if (empty($errors)) {
+		// "send at least once" style queue - only remove if all sends are successful
+		capsule_queue_remove($post_id);
+	}
+}
 
 function capsule_wp_editor_warning() {
 ?>
