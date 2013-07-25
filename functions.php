@@ -1,19 +1,19 @@
-<?php 
+<?php
 
 include_once('ui/functions.php');
 include_once('capsule-server-import-export.php');
 
 class Capsule_Server {
-	
+
 	public $api_meta_key;
 	public $user_api_key;
 
 	protected $api_endpoint;
 
 	function __construct($user_id = null) {
-		
+
 		$this->user_id = $user_id === null ? get_current_user_id() : $user_id;
-		
+
 		$this->api_endpoint = home_url();
 
 		$this->api_meta_key = capsule_server_api_meta_key();
@@ -35,7 +35,7 @@ class Capsule_Server {
 
 	public function user_profile($user_data) {
 		// Add API Key to User's Profile
-		$cap_server = new Capsule_Server($user_data->ID);		
+		$cap_server = new Capsule_Server($user_data->ID);
 		$api_key = $cap_server->user_api_key();
 
 		// Just a request handler
@@ -73,9 +73,9 @@ class Capsule_Server {
 		var url = $(this).attr('href');
 		e.preventDefault();
 		$.post(
-			url, { 
+			url, {
 				action: 'cap_new_api_key',
-				user_id: id 
+				user_id: id
 			},
 			function(data) {
 				if (data) {
@@ -85,7 +85,7 @@ class Capsule_Server {
 	});
 })(jQuery);
 </script>
-<?php 
+<?php
 	}
 
 	 function generate_api_key() {
@@ -135,7 +135,7 @@ function capsule_server_ajax_new_api() {
 }
 add_action('wp_ajax_cap_new_api_key', 'capsule_server_ajax_new_api');
 
-/** 
+/**
  * Generate the user meta key for the api key value.
  * This generates a different key for each blog if it is a multisite install
  *
@@ -149,15 +149,15 @@ function capsule_server_api_meta_key() {
 	else {
 		$api_meta_key = '_capsule_api_key';
 	}
-	
+
 	return $api_meta_key;
 }
 
 /**
  * Validates a user's existance in the db against an api key.
- * 
+ *
  * @param string $api_key The api key to use for the validation
- * @return int|null user ID or null if none can be found. 
+ * @return int|null user ID or null if none can be found.
  */
 function capsule_server_validate_user($api_key) {
 	global $wpdb;
@@ -167,7 +167,7 @@ function capsule_server_validate_user($api_key) {
 		SELECT `user_id`
 		FROM $wpdb->usermeta
 		WHERE `meta_key` = %s
-		AND `meta_value` = %s", 
+		AND `meta_value` = %s",
 		$meta_key,
 		$api_key
 	);

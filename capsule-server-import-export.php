@@ -1,4 +1,4 @@
-<?php 
+<?php
 class Capsule_Server_Import_Post {
 
 	// $data includes three keys:
@@ -53,23 +53,23 @@ class Capsule_Server_Import_Post {
 					// wp_set_post_terms will use the integers as names if not the correct type
 					if (in_array($taxonomy, $mapped_taxonomies)) {
 						// This handles forcing hierarchial taxonomies to be have terms as integers
-						
+
 						wp_set_post_terms($this->local_post_id, $terms, $taxonomy);
 					}
 					else {
 						// Check if hierarchical, need to pass IDs
 						if(is_taxonomy_hierarchical($taxonomy)) {
 							$terms_as_id = array();
-							
+
 							foreach ($terms as $term) {
 								// Get term, create if not exists
 								$term_id = capsule_create_term($term, $taxonomy);
-								
+
 								if ($term_id) {
 									$terms_as_id[] = $term_id;
 								}
 							}
-							
+
 							wp_set_post_terms($this->local_post_id, $terms_as_id, $taxonomy);
 						}
 						else {
@@ -108,7 +108,7 @@ class Capsule_Server_Import_Post {
 }
 
 class Capsule_Server_Export_Terms {
-	
+
 	function __construct($taxonomies = array()) {
 		$this->taxonomies = $taxonomies;
 	}
@@ -124,7 +124,7 @@ class Capsule_Server_Export_Terms {
 	 *		'term-slug-2' ...
 	 * 	),
 	 * 	'taxonomy_2' ...
-	 */ 
+	 */
 	function get_terms() {
 		$taxonomy_array = array();
 
@@ -136,7 +136,7 @@ class Capsule_Server_Export_Terms {
 		if (is_array($terms)) {
 			foreach ($terms as $term) {
 				$taxonomy_array[$term->taxonomy][$term->slug] = array(
-					'id' => $term->term_id, 
+					'id' => $term->term_id,
 					'name' => $term->name,
 					'description' => $term->description,
 					'taxonomy' => $term->taxonomy,
@@ -164,7 +164,7 @@ function capsule_server_controller() {
 					if ($user_id = capsule_server_validate_user($data['api_key'])) {
 						$capsule_import = new Capsule_Server_Import_Post($user_id, $data['post'], $data['tax']);
 						$post_id = $capsule_import->import();
-						
+
 						if ($capsule_import->local_post_id != 0) {
 							$response = array(
 								'result' => 'success',
