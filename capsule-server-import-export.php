@@ -148,6 +148,10 @@ class Capsule_Server_Export_Terms {
 }
 
 function capsule_server_controller() {
+	if (!isset($_POST['capsule_server_action'])) {
+		return;
+	}
+
 	switch ($_POST['capsule_server_action']) {
 		case 'insert_post':
 			$response = array(
