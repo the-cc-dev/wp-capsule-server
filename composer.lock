@@ -1,0 +1,128 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "848006bc2199280043251ad7c4fbe7eb",
+    "packages": [
+        {
+            "name": "ace",
+            "version": "1.1.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ajaxorg/ace.git",
+                "reference": "master"
+            },
+            "type": "library"
+        },
+        {
+            "name": "cf-gatekeeper",
+            "version": "1.8.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/crowdfavorite/wp-gatekeeper.git",
+                "reference": "master"
+            },
+            "type": "library"
+        },
+        {
+            "name": "jquery-scrollintoview",
+            "version": "v1.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/crowdfavorite/jquery-scrollintoview.git",
+                "reference": "master"
+            },
+            "type": "library"
+        },
+        {
+            "name": "jquery.hotkeys",
+            "version": "0.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jeresig/jquery.hotkeys.git",
+                "reference": "master"
+            },
+            "type": "library"
+        },
+        {
+            "name": "json-js",
+            "version": "1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/crowdfavorite/JSON-js.git",
+                "reference": "master"
+            },
+            "type": "library"
+        },
+        {
+            "name": "linkify",
+            "version": "1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/maranomynet/linkify.git",
+                "reference": "master"
+            },
+            "type": "library"
+        },
+        {
+            "name": "php-markdown",
+            "version": "1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/crowdfavorite/php-markdown-extra-extended.git",
+                "reference": "master"
+            },
+            "type": "library"
+        },
+        {
+            "name": "phpjs",
+            "version": "1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/crowdfavorite/phpjs.git",
+                "reference": "master"
+            },
+            "type": "library"
+        },
+        {
+            "name": "sidr",
+            "version": "1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/crowdfavorite/sidr.git",
+                "reference": "master"
+            },
+            "type": "library"
+        },
+        {
+            "name": "twitter-text-js",
+            "version": "1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/crowdfavorite/twitter-text-js.git",
+                "reference": "master"
+            },
+            "type": "library"
+        },
+        {
+            "name": "wp-taxonomy-filter",
+            "version": "1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/crowdfavorite/wp-taxonomy-filter.git",
+                "reference": "develop"
+            },
+            "type": "library"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}
